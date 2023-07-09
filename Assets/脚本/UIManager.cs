@@ -71,8 +71,6 @@ public class UIManager : MonoBehaviour
     //        }
 
     //    }
-
-        
    // }
 
     private void Awake()

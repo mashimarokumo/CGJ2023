@@ -32,6 +32,7 @@ public class CharacterMovement : MonoBehaviour
     void Update()
     {
         Movement();
+        CheckRunning();
 
         if(resumeTime1 > 0)
         {
@@ -52,13 +53,29 @@ public class CharacterMovement : MonoBehaviour
     }
 
 
+    private void CheckRunning()
+    {
+        if(rb.velocity.x != 0)
+        {
+            animator.SetBool("isRunning", true);
+        }
+        else
+        {
+            animator.SetBool("isRunning", false);
+        }
+
+
+
+    }
+
+
     void Movement()
     {
         if (Input.GetAxis("Horizontal") > 0)
         {
             rb.velocity = new Vector2(speed, rb.velocity.y);
             transform.localScale = new Vector3(1, transform.localScale.y, 1);
-            animator.SetBool("isRunning", true);
+            
         }
         else if (Input.GetAxis("Horizontal") < 0)
         {
@@ -69,7 +86,7 @@ public class CharacterMovement : MonoBehaviour
         else
         {
             rb.velocity = new Vector2(0, rb.velocity.y);
-            animator.SetBool("isRunning", false);
+            
 
         }
 

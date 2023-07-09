@@ -15,6 +15,7 @@ public class VibrateControler : MonoBehaviour
     public bool isCreeping = false;
 
     public float enemyRange;
+    public bool isBeanApproching;
 
     TimeLine IronPad1;
     private TimeLine IronPad2;
@@ -24,6 +25,7 @@ public class VibrateControler : MonoBehaviour
     private TimeLine dust2;
 
     public CharacterMovement characterMovement;
+    public Rigidbody2D rb;
 
     public LayerMask enemyLayer;
     private Collider2D[] coll = new Collider2D[10];
@@ -57,8 +59,14 @@ public class VibrateControler : MonoBehaviour
         else
             characterMovement.speed = 3;
 
+        distance = Vector3.Distance(GameManager.Instance.closestBean.position, transform.position);
+        isBeanApproching = distance < lastdistance;
+        lastdistance = distance;
+
     }
 
+    float distance;
+    float lastdistance;
     public void Vibrate()
     {
         if (Gamepad.current.rightTrigger.isPressed && !isResuming)
@@ -102,12 +110,11 @@ public class VibrateControler : MonoBehaviour
             }
             else if (Physics2D.Raycast(transform.position, Vector2.down, 2, 1 << 11))
             {
-
-                if (Physics2D.OverlapCircleNonAlloc(gameObject.transform.position,enemyRange,coll,enemyLayer)!=0)
+                if (isBeanApproching)
                 {
                     if (!dust1.m_isStart) dust1.Start();
                 }
-                else
+                else if(rb.velocity.x != 0)
                 {
                     if (!dust2.m_isStart) dust2.Start();
                 }
