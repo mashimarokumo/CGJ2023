@@ -3,11 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-enum GroundType
-{
-    GRASS,
-
-}
 public class VibrateControler : MonoBehaviour
 {
     public float vigorLimit;
@@ -17,9 +12,8 @@ public class VibrateControler : MonoBehaviour
     [SerializeField]
     private float consumeSpeed;
     private bool isResuming = false;
-    private bool isCreeping = false;
+    public bool isCreeping = false;
 
-    GroundType curGroundType;
     public bool isEnemyApproching;
     public bool isBeansApproching;
 
@@ -30,6 +24,8 @@ public class VibrateControler : MonoBehaviour
     private TimeLine dust1;
     private TimeLine dust2;
 
+    public CharacterMovement characterMovement;
+
     //public float low;
     //public float high;
 
@@ -39,8 +35,8 @@ public class VibrateControler : MonoBehaviour
         vigor = vigorLimit;
         IronPad1 = CreateVibrate(3, new bool[] { true, false, false }, new float[] { 0.3f, 0.3f, 0.2f });
 
-        IronPad2 = CreateVibrate(3, new bool[] { false, false, true }, new float[] {0.2f, 0.3f, 0.4f});
-      
+        IronPad2 = CreateVibrate(3, new bool[] { false, false, true }, new float[] { 0.2f, 0.3f, 0.4f });
+
         woodPad = CreateVibrate(1, new bool[] { true }, new float[] { 0.3f }, true);
 
         glass = CreateVibrate(1, new bool[] { false }, new float[] { 0.1f });
@@ -53,28 +49,34 @@ public class VibrateControler : MonoBehaviour
     {
         Vibrate();
         TimeLineManager.instance.Loop(Time.deltaTime);
+        if (Gamepad.current.rightTrigger.isPressed)
+        {
+            characterMovement.speed = 1;
+        }
+        else
+            characterMovement.speed = 3;
+
     }
 
     public void Vibrate()
     {
         if (Gamepad.current.rightTrigger.isPressed && !isResuming)
         {
-            if (Physics2D.Raycast(transform.position, Vector2.down, 5, 1 << 6))
+            isCreeping = true;
+            if (Physics2D.Raycast(transform.position, Vector2.down, 2, 1 << 6))
             {
                 Debug.Log("Grass");
                 //0.01 20 0.6
                 GamepadVibrate(0.01f, 20f);
                 vigor -= Time.deltaTime * consumeSpeed;
-                isCreeping = true;
             }
-            else if (Physics2D.Raycast(transform.position, Vector2.down, 5, 1 << 7))
+            else if (Physics2D.Raycast(transform.position, Vector2.down, 2, 1 << 7))
             {
                 Debug.Log("Stone");
                 GamepadVibrate(20f, 40);
                 vigor -= Time.deltaTime * consumeSpeed;
-                isCreeping = true;
             }
-            else if (Physics2D.Raycast(transform.position, Vector2.down, 5, 1 << 8))
+            else if (Physics2D.Raycast(transform.position, Vector2.down, 2, 1 << 8))
             {
                 if (isEnemyApproching)
                 {
@@ -85,22 +87,19 @@ public class VibrateControler : MonoBehaviour
                     if (!IronPad1.m_isStart) IronPad1.Start();
                 }
                 vigor -= Time.deltaTime * consumeSpeed;
-                isCreeping = true;
             }
-            else if(Physics2D.Raycast(transform.position, Vector2.down, 5, 1 << 9))
+            else if (Physics2D.Raycast(transform.position, Vector2.down, 2, 1 << 9))
             {
                 if (!woodPad.m_isStart) woodPad.Start();
-               // GamepadVibrate(60f, 60);
+                // GamepadVibrate(60f, 60);
                 vigor -= Time.deltaTime * consumeSpeed;
-                isCreeping = true;
             }
-            else if (Physics2D.Raycast(transform.position, Vector2.down, 5, 1 << 10))
+            else if (Physics2D.Raycast(transform.position, Vector2.down, 2, 1 << 10))
             {
                 if (!glass.m_isStart) glass.Start();
                 vigor -= Time.deltaTime * consumeSpeed;
-                isCreeping = true;
             }
-            else if (Physics2D.Raycast(transform.position, Vector2.down, 5, 1 << 11))
+            else if (Physics2D.Raycast(transform.position, Vector2.down, 2, 1 << 11))
             {
                 if (isBeansApproching)
                 {
@@ -111,7 +110,6 @@ public class VibrateControler : MonoBehaviour
                     if (!dust2.m_isStart) dust2.Start();
                 }
                 vigor -= Time.deltaTime * consumeSpeed;
-                isCreeping = true;
             }
         }
         else
@@ -119,6 +117,7 @@ public class VibrateControler : MonoBehaviour
             Gamepad.current.PauseHaptics();
             isCreeping = false;
         }
+
 
         if (vigor < 0)
         {
@@ -129,7 +128,7 @@ public class VibrateControler : MonoBehaviour
         {
             vigor += Time.deltaTime * resumeSpeed;
         }
-        else if(vigor > vigorLimit)
+        else if (vigor > vigorLimit)
         {
             isResuming = false;
         }
@@ -171,8 +170,8 @@ public class VibrateControler : MonoBehaviour
             });
             time += interval[i];
         }
-        
-        timeLine.AddEvent(time += interval[interval.Length-1], 3, (a) =>
+
+        timeLine.AddEvent(time += interval[interval.Length - 1], 3, (a) =>
         {
             timeLine.m_isStart = false;
         });

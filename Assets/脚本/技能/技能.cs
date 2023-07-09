@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class 技能 : MonoBehaviour
 {
-    private Transform recordTransform;
+    private Vector3 recordTransform;
     public int num = 1;
     [Header("静止隐身持续时间")]
     public float consistTime;
@@ -23,12 +23,12 @@ public class 技能 : MonoBehaviour
     }
     public void RecordTransfom()
     {
-        recordTransform = gameObject.transform;
+        recordTransform = gameObject.transform.position;
         num = 2;
     }
     public void Transport()
     {
-        gameObject.transform.position  = recordTransform.position ;
+        gameObject.transform.position  = recordTransform ;
         num = 1;
     }
     public void Skill2()

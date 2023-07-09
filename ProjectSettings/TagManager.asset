@@ -11,13 +11,13 @@ TagManager:
   - Player
   - Water
   - UI
-  - canMove
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Grass
+  - Stone
+  - IronPad
+  - WoodPad
+  - Glass
+  - Dust
+  - Stairs
   - 
   - 
   - 
