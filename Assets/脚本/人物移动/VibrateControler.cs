@@ -14,8 +14,7 @@ public class VibrateControler : MonoBehaviour
     private bool isResuming = false;
     public bool isCreeping = false;
 
-    public bool isEnemyApproching;
-    public bool isBeansApproching;
+    public float enemyRange;
 
     TimeLine IronPad1;
     private TimeLine IronPad2;
@@ -26,6 +25,8 @@ public class VibrateControler : MonoBehaviour
 
     public CharacterMovement characterMovement;
 
+    public LayerMask enemyLayer;
+    private Collider2D[] coll = new Collider2D[10];
     //public float low;
     //public float high;
 
@@ -78,7 +79,7 @@ public class VibrateControler : MonoBehaviour
             }
             else if (Physics2D.Raycast(transform.position, Vector2.down, 2, 1 << 8))
             {
-                if (isEnemyApproching)
+                if (Physics2D.OverlapCircleNonAlloc(gameObject.transform.position, enemyRange, coll, enemyLayer) == 0)
                 {
                     if (!IronPad2.m_isStart) IronPad2.Start();
                 }
@@ -101,7 +102,8 @@ public class VibrateControler : MonoBehaviour
             }
             else if (Physics2D.Raycast(transform.position, Vector2.down, 2, 1 << 11))
             {
-                if (isBeansApproching)
+
+                if (Physics2D.OverlapCircleNonAlloc(gameObject.transform.position,enemyRange,coll,enemyLayer)!=0)
                 {
                     if (!dust1.m_isStart) dust1.Start();
                 }
